@@ -22,6 +22,10 @@ function Auth({ formType }) {
   const onChangeInput = (event) => {
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
   };
+
+  const onClickSubmit = () => {
+    navigate("/profile");
+  };
   return (
     <>
       <div
@@ -95,18 +99,34 @@ function Auth({ formType }) {
           </div>
         )}
 
-        <button type="button" className="btn btn-primary m-3">
+        <button
+          type="button"
+          className="btn btn-primary m-3"
+          onClick={onClickSubmit}
+        >
           {formType === "login" ? "Log In" : "Sign Up"}
         </button>
 
         <div>
           {formType === "login" ? (
             <p>
-              Not a user? <span onClick={notUser}>Sign Up</span>
+              Not a user?{" "}
+              <span
+                onClick={notUser}
+                style={{ color: "#3194f7", cursor: "pointer" }}
+              >
+                Sign Up
+              </span>
             </p>
           ) : (
             <p>
-              Already a user? <span onClick={alreadyUser}>Log In</span>{" "}
+              Already a user?{" "}
+              <span
+                onClick={alreadyUser}
+                style={{ color: "#3194f7", cursor: "pointer" }}
+              >
+                Log In
+              </span>{" "}
             </p>
           )}
         </div>
