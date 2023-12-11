@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../../services/auth";
 
 function Auth({ formType }) {
   const [formValues, setFormValues] = useState({
@@ -23,9 +24,49 @@ function Auth({ formType }) {
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
   };
 
-  const onClickSubmit = () => {
+  const onClickSubmit = async () => {
+    // await postData();
+    let data = {};
+
+    if (formType === "login") {
+      data = await authApi.loginUser({
+        email: formValues.email,
+        password: formValues.pass,
+      });
+      localStorage.setItem("user", JSON.stringify(data));
+    } else {
+      data = await authApi.signupUser({
+        email: formValues.email,
+        password: formValues.pass,
+      });
+
+      var newProviderData = {
+        displayName: `${formValues.fname}  ${formValues.lname}`,
+        // photoURL: "https://example.com/john_doe_photo.jpg",
+      };
+      const updatedUser = await authApi.updateUser(newProviderData);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
+
     navigate("/profile");
   };
+
+  // async function postData() {
+  //   const url = `${process.env.REACT_APP_API_URL}/api/auth/${
+  //     formType === "login" ? "login" : "signup"
+  //   }`;
+  //   const data = { email: formValues.email, password: formValues.pass };
+
+  //   const response = await fetch(url, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(data),
+  //   });
+  //   console.log(response.json);
+  // }
+
   return (
     <>
       <div
@@ -55,7 +96,7 @@ function Auth({ formType }) {
           <div className="form-floating mb-3">
             <input
               type="text"
-              name="lnakjhvkgme"
+              name="lname"
               className="form-control"
               placeholder="Last Name"
               onChange={onChangeInput}
