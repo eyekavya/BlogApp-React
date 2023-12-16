@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../../services/auth";
+import { userServices } from "../../services/userServices";
 
 function Auth({ formType }) {
   const [formValues, setFormValues] = useState({
@@ -22,6 +24,61 @@ function Auth({ formType }) {
   const onChangeInput = (event) => {
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
   };
+
+  const onClickSubmit = async () => {
+    // await postData();
+    let data = {};
+
+    if (formType === "login") {
+      data = await authApi.loginUser({
+        email: formValues.email,
+        password: formValues.pass,
+      });
+      // localStorage.setItem("user", JSON.stringify(data));
+    } else {
+      data = await authApi.signupUser({
+        email: formValues.email,
+        password: formValues.pass,
+      });
+
+      var newProviderData = {
+        displayName: `${formValues.fname}  ${formValues.lname}`,
+        // photoURL: "https://example.com/john_doe_photo.jpg",
+      };
+      await authApi.updateUser(newProviderData);
+
+      await userServices.addUser(data?.user?.uid, {
+        name: `${formValues.fname}  ${formValues.lname}`,
+        email: formValues.email,
+        follower: 0,
+        following: 0,
+        profilepic: "",
+      });
+    }
+
+    const getUSerData = await userServices.getUser(data?.user?.uid);
+    localStorage.setItem("user", JSON.stringify(getUSerData));
+    localStorage.setItem("uid", data?.user?.uid);
+
+    navigate("/profile");
+  };
+
+  // async function postData() {
+  //   const url = `${process.env.REACT_APP_API_URL}/api/auth/${
+  //     formType === "login" ? "login" : "signup"
+  //   }`;
+  //   const data = { email: formValues.email, password: formValues.pass };
+
+  //   const response = await fetch(url, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(data),
+  //   });
+  //   console.log(response.json);
+  // }
+
   return (
     <>
       <div
@@ -51,7 +108,7 @@ function Auth({ formType }) {
           <div className="form-floating mb-3">
             <input
               type="text"
-              name="lnakjhvkgme"
+              name="lname"
               className="form-control"
               placeholder="Last Name"
               onChange={onChangeInput}
@@ -95,18 +152,34 @@ function Auth({ formType }) {
           </div>
         )}
 
-        <button type="button" className="btn btn-primary m-3">
+        <button
+          type="button"
+          className="btn btn-primary m-3"
+          onClick={onClickSubmit}
+        >
           {formType === "login" ? "Log In" : "Sign Up"}
         </button>
 
         <div>
           {formType === "login" ? (
             <p>
-              Not a user? <span onClick={notUser}>Sign Up</span>
+              Not a user?{" "}
+              <span
+                onClick={notUser}
+                style={{ color: "#3194f7", cursor: "pointer" }}
+              >
+                Sign Up
+              </span>
             </p>
           ) : (
             <p>
-              Already a user? <span onClick={alreadyUser}>Log In</span>{" "}
+              Already a user?{" "}
+              <span
+                onClick={alreadyUser}
+                style={{ color: "#3194f7", cursor: "pointer" }}
+              >
+                Log In
+              </span>{" "}
             </p>
           )}
         </div>
