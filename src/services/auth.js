@@ -28,14 +28,21 @@ const loginUser = async (data) => {
   }
 };
 
-const updateUser = async (data) => {
-  return await updateProfile(auth.currentUser, data)
-    .then(() => {
-      return auth.currentUser;
-    })
-    .catch((error) => {
-      return error;
-    });
+const logout = async () => {
+  localStorage.clear();
+  await auth.signOut();
 };
 
-export const authApi = { loginUser, signupUser, updateUser };
+const updateUser = async (data) => {
+  return await updateProfile(auth.currentUser, data).catch((error) => {
+    return error;
+  });
+};
+
+export const authApi = {
+  loginUser,
+  signupUser,
+  updateUser,
+  logout,
+  providerValue: auth.currentUser,
+};

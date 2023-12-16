@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../services/auth";
+import { userServices } from "../../services/userServices";
 
 function Auth({ formType }) {
   const [formValues, setFormValues] = useState({
@@ -33,7 +34,7 @@ function Auth({ formType }) {
         email: formValues.email,
         password: formValues.pass,
       });
-      localStorage.setItem("user", JSON.stringify(data));
+      // localStorage.setItem("user", JSON.stringify(data));
     } else {
       data = await authApi.signupUser({
         email: formValues.email,
@@ -44,9 +45,20 @@ function Auth({ formType }) {
         displayName: `${formValues.fname}  ${formValues.lname}`,
         // photoURL: "https://example.com/john_doe_photo.jpg",
       };
-      const updatedUser = await authApi.updateUser(newProviderData);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      await authApi.updateUser(newProviderData);
+
+      await userServices.addUser(data?.user?.uid, {
+        name: `${formValues.fname}  ${formValues.lname}`,
+        email: formValues.email,
+        follower: 0,
+        following: 0,
+        profilepic: "",
+      });
     }
+
+    const getUSerData = await userServices.getUser(data?.user?.uid);
+    localStorage.setItem("user", JSON.stringify(getUSerData));
+    localStorage.setItem("uid", data?.user?.uid);
 
     navigate("/profile");
   };
