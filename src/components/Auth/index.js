@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../services/auth";
 import { userServices } from "../../services/userServices";
+import ReactPasswordChecklist from "react-password-checklist";
 
 function Auth({ formType }) {
   const [formValues, setFormValues] = useState({
@@ -11,6 +12,8 @@ function Auth({ formType }) {
     pass: "",
     repass: "",
   });
+
+  const [isPassValid, setIsPassValid] = useState(false);
 
   const navigate = useNavigate();
 
@@ -152,10 +155,23 @@ function Auth({ formType }) {
           </div>
         )}
 
+        {formType !== "login" && (
+          <ReactPasswordChecklist
+            rules={["minLength", "specialChar", "number", "capital", "match"]}
+            minLength={7}
+            value={formValues.pass}
+            valueAgain={formValues.repass}
+            onChange={(isValid) => {
+              setIsPassValid(isValid);
+            }}
+          />
+        )}
+
         <button
           type="button"
           className="btn btn-primary m-3"
           onClick={onClickSubmit}
+          disabled={!isPassValid}
         >
           {formType === "login" ? "Log In" : "Sign Up"}
         </button>
