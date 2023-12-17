@@ -50,9 +50,9 @@ function Auth({ formType }) {
       await userServices.addUser(data?.user?.uid, {
         name: `${formValues.fname}  ${formValues.lname}`,
         email: formValues.email,
-        follower: 0,
-        following: 0,
-        profilepic: "",
+        // follower: 0,
+        // following: 0,
+        // profilepic: "",
       });
     }
 

@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Auth from "./components/Auth";
 import Profile from "./components/Profile";
+import Blog from "./Blog";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/signup" element={<Auth />}></Route>
           <Route path="/login" element={<Auth formType="login" />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/blog" element={<Blog />}></Route>
         </Routes>
       </Router>
     </>
